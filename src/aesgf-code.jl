@@ -75,6 +75,15 @@ global const ATABLE = [
 0xaa, 0xcd, 0x9a, 0xa0, 0x75, 0x54, 0x0e, 0x01
 ]
 
+# Workaround https://github.com/JuliaLang/julia/issues/20560
+function aes_reduce(op, a)
+  out = a[1]
+  for i in 2:length(a)
+    out = op(out,a[i])
+  end
+  out
+end
+
 # Addition over GF(2^8)
 function gadd(a::UInt8, b::UInt8)
   xor.(a , b)

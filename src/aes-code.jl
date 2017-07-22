@@ -272,7 +272,7 @@ function MixColumnsGen(a::Array{UInt8, 1}, inv::Bool)
 		# Matrix multiplication with Galois field operations
 		for r=1:Nb
 			mi = matrix[rowIndices(r)]
-			a[indices[r]] = reduce(gadd, map(gmul, ai, mi))
+			a[indices[r]] = aes_reduce(gadd, map(gmul, ai, mi))
 		end
 	end
 	return a
