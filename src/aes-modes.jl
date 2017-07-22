@@ -21,7 +21,7 @@ end
 # direction.
 function AESECB(blocks::Array{UInt8, 1}, key::Array{UInt8, 1}, encrypt::Bool)
 	noBlocks = paddedCheck(blocks, key)
-	o = Array(UInt8, length(blocks))
+  o = Array{UInt8}(length(blocks))
 
 	for i=1:noBlocks
 		indices = blockIndices(blocks, i)

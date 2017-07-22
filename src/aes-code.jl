@@ -128,18 +128,18 @@ end
 function KeyExpansion(key::Array{UInt8, 1}, Nk::Int, Nr::Int)
 	assert(length(key) == (WORDLENGTH * Nk))
 
-	w = Array(UInt8, WORDLENGTH * Nb * (Nr + 1))
+  w = Array{UInt8}(WORDLENGTH * Nb * (Nr + 1))
 	w[1:(WORDLENGTH * Nk)] = copy(key)
 	i = Nk
 
 	while i < (Nb * (Nr + 1))
 		temp = w[((i - 1) * WORDLENGTH + 1):(i * WORDLENGTH)]
 		if mod(i, Nk) == 0
-			temp = SubWord(RotWord(temp)) $ Rcon(div(i, Nk))
+      temp = xor.(SubWord(RotWord(temp)) , Rcon(div(i, Nk)))
 		elseif (Nk > 6) && (mod(i, Nk) == Nb)
 			temp = SubWord(temp)
 		end
-		w[(i * WORDLENGTH + 1):((i + 1) * WORDLENGTH)] = w[((i - Nk) * WORDLENGTH + 1):((i - Nk + 1) * WORDLENGTH)] $ temp
+    w[(i * WORDLENGTH + 1):((i + 1) * WORDLENGTH)] = xor.(w[((i - Nk) * WORDLENGTH + 1):((i - Nk + 1) * WORDLENGTH)] , temp)
 		i += 1
 	end
 
@@ -148,7 +148,8 @@ end
 
 function SubWord(w::Array{UInt8, 1})
 	assert(length(w) == WORDLENGTH)
-	map!(x -> SBOX[int(x) + 1], w)
+ 	map!(x -> SBOX[Int(x) + 1], w, w)
+  w
 end
 
 function RotWord(w::Array{UInt8, 1})
@@ -229,8 +230,8 @@ end
 
 function SubBytesGen(a::Array{UInt8, 1}, inv::Bool)
 	box = inv ? INVSBOX : SBOX
-	f = (x) -> box[int(x) + 1]
-	return map!(f, a)
+	f = (x) -> box[Int(x) + 1]
+	map(f, a)
 end
 
 function ShiftRows(a::Array{UInt8, 1})
