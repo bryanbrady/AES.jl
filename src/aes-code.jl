@@ -212,12 +212,12 @@ end
 
 # Returns one-based column indices of the given column (one-based).
 function columnIndices(column::Int)
-	return [column:Nb:Nb*Nb]
+  return [column:Nb:Nb*Nb][1]
 end
 
 # Returns row indices of the given row (one-based).
 function rowIndices(row::Int)
-	return [((row - 1) * Nb + 1):(row * Nb)]
+  return [((row - 1) * Nb + 1):(row * Nb)][1]
 end
 
 function SubBytes(a::Array{UInt8, 1})
@@ -248,7 +248,7 @@ function ShiftRowsGen(a::Array{UInt8, 1}, inv::Bool)
 	for r=2:Nb
 		indices = columnIndices(r)
 		step = inv ? Nb + 2 - r : r
-		p = map(c -> mod(c + step - 1, Nb) + 1, [0:(Nb-1)])
+    p = map(c -> mod.(c + step - 1, Nb) + 1, [0:(Nb-1)])[1]
 		a[indices] = a[indices][p]
 	end
 	return a
